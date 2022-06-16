@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/common.css"/>
+    <style>
+        html, body {
+            background-color: #dfdede !important;
+        }
+
+        li {
+            position: relative;
+            padding: 3px 10px;
+            border-bottom: 1px solid #d4d3d3;
+            background-size: 10px;
+            background-repeat: no-repeat;
+            background-position: 78%;
+        }
+
+        li:first-child {
+            height: 46px;
+            display: -webkit-box;
+            -webkit-box-align: center;
+        }
+
+        .liActive {
+            background-color: #ebeceb;
+        }
+
+        li a {
+            display: block;
+            padding: 10px 30px;
+            background-size: 20px;
+            background-repeat: no-repeat;
+            background-position: left;
+        }
+
+    </style>
+</head>
+<body>
+<nav>
+    <ul>
+        <li tapmode="liActive" class="liActive" onclick="openFrm(this, 0, '综合资讯')"><a class="news_blog">综合资讯</a></li>
+        <li tapmode="liActive" onclick="openFrm(this, 1, '有问必答')"><a class="about_me">有问必答</a></li>
+        <li tapmode="liActive" onclick="openFrm(this, 2, '动弹一下')"><a class="soft_update">动弹一下</a></li>
+        <li tapmode="liActive" onclick="openFrm(this, 3, '附近的人')"><a class="near_people">附近的人</a></li>
+        <li tapmode="liActive" onclick="openFrm(this, 4, '于我相关')"><a class="about_me">于我相关</a></li>
+        <li tapmode="liActive" onclick="openFrm(this, 5, '更多设置')"><a class="more">更多设置</a></li>
+    </ul>
+</nav>
+</body>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script>
+apiready = function () {
+    api.setStatusBarStyle({
+        style: 'dark'
+    });
+    $api.fixIos7Bar($api.dom('nav'));
+    api.addEventListener({	// 安卓系统back键被点击时
+        name: 'keyback'
+    }, function (ret, err) {
+        api.closeSlidPane();	// SlidPane处于左或右侧滑状态时，将其收起
+    });
+};
+
+function openFrm(obj, index, title){
+	$("li").removeClass("liActive");
+	$(obj).addClass("liActive");
+
+    if (title) {
+    	$api.setStorage('destination', title);
+    }
+   
+    if (typeof index == 'number') {
+    	$api.setStorage('index', index);
+        api.execScript({
+            name: 'home_slide',
+            script: 'setFrameGroupIndex(' + index + ', "' + title + '" )'
+        });
+    }
+    
+	api.closeSlidPane();
+}
+
+
+</script>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <script type="text/javascript" src="../script/api.js"></script>
+    <script type="text/javascript" src="../script/zepto.min.js"></script>
+    <script type="text/javascript" src="../script/config.js"></script>
+    <script type="text/javascript" src="../script/common.js"></script>
+    <style>
+        body, html {
+            height: 100%;
+        }
+
+        body {
+            background-image: url(../image/login/bg.jpg);
+            background-repeat: no-repeat;
+            background-size: 100%;
+        }
+
+        header {
+            display: -webkit-box;
+        }
+
+        .title {
+            -webkit-box-flex: 1;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+        }
+
+        .btn {
+            width: 50px;
+            height: 50px;
+        }
+
+        .cancel {
+            background-image: url("../image/login/ad_close_gray@2x.png");
+            background-size: 40px;
+            background-repeat: no-repeat no-repeat;
+            background-position: center;
+        }
+
+        i {
+            display: block;
+            width: 30px;
+            height: 30px;
+            background-size: 30px;
+            background-repeat: no-repeat no-repeat;
+            background-position: center;
+        }
+
+        .content {
+            margin-top: 180px;
+        }
+
+        .button.green {
+            background-color: #36b05e;
+        }
+
+        .button {
+            display: block;
+            color: white;
+            margin: 0 40px;
+            text-align: center;
+            border-radius: 8px;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .button.yellow {
+            background-color: #FF7800;
+        }
+
+        .margin-top-25 {
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <!--div class="btn cancel" tapmode="" onclick="api.closeWin()"></div-->
+    <!--div class="title">登陆</div-->
+    <div class="btn"></div>
+</header>
+<div class="content">
+
+    <div class="button green" id="login" tapmode="" onclick="login()">授权登录</div>
+    <div class="button yellow margin-top-25" tapmode="" onclick="register()">注册帐户</div>
+</div>
+<script>
+	var client_id, client_secret, redirect_uri;
+    apiready = function () {
+        $api.fixIos7Bar($api.dom('header'));
+
+        if(APP_DEBUG){	// 调试模式使用 config.js 里面的测试配置
+        	client_id 		= API_client_id;
+        	client_secret 	= API_client_secret;
+        	redirect_uri 	= API_redirect_uri;
+        }else{			// 正式云编译使用 key.xml 里面的加密配置 从而有效保护应用的私钥
+			api.loadSecureValue({
+				key:'client_id'
+			}, function(ret, err) {
+			    client_id = ret.client_id;
+			});
+			api.loadSecureValue({
+				key:'client_secret'
+			}, function(ret, err) {
+			    client_secret = ret.client_secret;
+			});
+			api.loadSecureValue({
+				key:'redirect_uri'
+			}, function(ret, err) {
+			    redirect_uri = ret.redirect_uri;
+			});
+        }
+        		
+    };
+
+    function login(){
+    	// 打开 OSC Widget
+        api.openWidget({
+            id: 'OSC',
+            wgtParam: {
+            	url: OpenAPI.authorize,
+            	client_id: client_id,
+            	state: 'ThinkPHP',
+            	redirect_uri: redirect_uri,
+            },
+            animation: {
+                type: 'flip',
+                subType: 'from_left'
+            }
+        }, function(ret, err){
+        	log($api.jsonToStr(ret));
+        	if(ret && ret.code && ret.state == 'ThinkPHP'){
+        		getToken(ret.code);
+        	}else if(ret.state == 'close'){
+				api.toast({
+				    msg: '放弃登录',
+				    duration:2000,
+				    location: 'top'
+				});
+        	}else{
+        		log('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode);
+				api.toast({
+				    msg: '登录异常',
+				    duration:2000,
+				    location: 'top'
+				});
+        	}
+            
+        });
+    }
+    
+    // 获取 access_token
+    function getToken(code){
+    	log(code);
+		api.ajax({
+			url: OpenAPI.access_token,
+			method: 'post',
+			timeout: 30,
+			dataType: 'json',
+			data:{
+				values: {
+					client_id: client_id,
+					client_secret: client_secret,
+					grant_type: 'authorization_code',
+					redirect_uri: redirect_uri,
+					code: code,
+					dataType:OpenAPI.dataType,
+					callback:'json',
+				},
+			},
+			returnAll:false,
+		},function(ret,err){
+			log(ret);
+		    if (ret) {
+		    	$api.setStorage('access_token',ret.access_token);
+		    	$api.setStorage('refresh_token',ret.refresh_token);
+		    	$api.setStorage('token_type',ret.token_type);
+		    	$api.setStorage('expires_in',ret.expires_in);
+		    	$api.setStorage('uid',ret.uid);
+		    	log('登录成功');
+				api.toast({
+				    msg: '登录成功',
+				    duration:2000,
+				    location: 'top'
+				});
+                reload();
+		    }else {
+		    	log('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode);
+				api.toast({
+				    msg: '登录异常',
+				    duration:2000,
+				    location: 'top'
+				});
+		    };
+		});
+		
+    }
+    
+    // 登录完成后刷新 root 窗口
+    function reload(){
+    	var isAndroid = (/android/gi).test(navigator.appVersion);
+    	if(isAndroid){
+    		api.openWin({name: 'root',reload:true,pageParam:{from:'login'}});
+    	}else{
+    		setInterval("api.openWin({name: 'root',reload:true,pageParam:{from:'login'}})",200);     // 由于 iOS 不执行这句 api.openWin() 所以加个延迟执行
+    	}
+    }
+    
+    // 打开注册页面
+    function register() {
+        open_url('http://m.oschina.net/reg', '注册帐户');
+    }
+</script>
+</body>
+</html>

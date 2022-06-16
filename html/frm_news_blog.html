@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/common.css"/>
+    <style>
+        * {
+            outline: 0;
+        }
+		.tabBar{
+		    height: 40px;
+		    background-color: #ffffff;
+		    position: relative;
+		}
+		.tabBar .tabBar-btn{
+		    width: 25%;
+		    height: 39px;
+		    border-bottom: 1px solid #eaeaea;
+		    font-size: 1em;
+		    line-height: 40px;
+		    color: #9c9c9c;
+		}
+		.tabBar .tabBar-btn:active,.tabBar .tabBar-btn.tap-active{
+		    background-color: #fffff;
+		    color: #0db22e;
+		}
+		.tabBar .tabBar-btn.active{
+		    color: #0db22e;
+		}
+		.tabBar .tabBar-bar{
+		    position: absolute;
+		    left: 0;
+		    bottom: 0;
+		    width: 25%;
+		    height: 3px;
+		    background-color: #0db22e;
+		    -webkit-transition: all .25s ease;
+		            transition: all .25s ease;
+		}
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <div id="header">
+        <div class="tabBar ">
+            <div class="tabBar-btn pull-left active" tapmode="tap-active" onclick="changeChannel(0);">新闻资讯</div>
+            <div class="tabBar-btn pull-left" tapmode="tap-active" onclick="changeChannel(1);">软件更新</div>
+            <div class="tabBar-btn pull-left" tapmode="tap-active" onclick="changeChannel(2);">最新博客</div>
+            <div class="tabBar-btn pull-left" tapmode="tap-active" onclick="changeChannel(3);">推荐博客</div>
+            <div class="tabBar-bar"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+
+apiready = function () {
+	var pageParam = api.pageParam;
+	var y = pageParam.main_group_height + $("#header").height();
+	api.openFrameGroup ({
+	    name: 'group_0',
+	    scrollEnabled:false,
+	    rect:{x: 0, y: y, w: 'auto', h: 'auto'},
+	    index:0,
+	    frames: [
+	        {
+	            name: 'frm_news_list',
+	            url: 'frm_news_list.html',
+	            //pageParam:{news_blog_group_height:y},
+	        },
+	        {
+	            name: 'frm_soft_updata_list',
+	            url: 'frm_soft_updata_list.html'
+	        },
+	        {
+	            name: 'frm_blog_list',
+	            url: 'frm_blog_list.html'
+	        },
+	        {
+	            name: 'frm_blog_recommend_list',
+	            url: 'frm_blog_recommend_list.html'
+	        },
+	    ]
+	}, function(ret, err){
+        var name = ret.name;
+        var index = ret.index;
+        changeBar(index);
+	});
+
+};
+
+function changeChannel(index){
+    api.setFrameGroupIndex({
+        name: 'group_0',
+        index: index,
+        scroll: true
+    });
+}
+
+ function changeBar(index){
+    var aTabBarBtn = $api.domAll('.tabBar .tabBar-btn');
+    var tabBar = $api.dom('.tabBar .tabBar-bar');
+    tabBar.style.webkitTransform = 'translateX('+(100*index)+'%)';
+    tabBar.style.transform = 'translateX('+100*index+'%)';
+    for (var i = 0,len = aTabBarBtn.length; i < len; i++) {
+        if (index == i) {
+            $api.addCls(aTabBarBtn[i],'active');
+        } else{
+            $api.removeCls(aTabBarBtn[i],'active');
+        }
+        
+    };
+}
+
+</script>
+</body>
+</html>

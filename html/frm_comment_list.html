@@ -1,0 +1,307 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/common.css"/>
+    <style>
+		html,body{
+		    height: auto;
+		}
+		#main{
+		    padding: 0; color: #4c4c4c;
+		}
+
+		
+		
+.thread {
+    overflow: visible;
+    word-break: break-all; word-wrap:break-word;	/* 自动换行 */
+}
+ .comments {
+    width: 100%;
+}
+.comments::after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+.thread ul, .thread ul li {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+    margin: 0;
+    padding: 0;
+}
+.thread ol li {
+    display: block;
+    list-style: outside none none;
+}
+.thread li.post {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+    clear: both;
+    list-style: outside none none;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+}
+.thread .post-self::after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+.thread .post-self {
+    border-top: 1px solid rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    position: relative;
+}
+
+.thread .avatar {
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    float: left;
+    position: relative;
+}
+.thread .avatar img {
+    border-radius: 27px;
+    height: 30px;
+    transition: -moz-transform 0.4s ease-out 0s;
+    width: 30px;
+}
+.thread .comment-body {
+    padding-left: 36px;
+}
+.thread .comment-header {
+    padding-top: 1px;
+}
+.thread .comment-header .user-name {
+    color: #0284ff;
+    font-size: 0.9em;
+    margin-right: 8px;
+    background-color: transparent;
+    text-decoration: none;
+    transition: color 0.15s linear 0s;
+}
+.thread .comment-body p {
+    font-size: 1em;
+    line-height: 1.5em;
+    margin: 0.5em 0;
+    word-wrap: break-word;
+}
+.thread p {
+    clear: none;
+    text-indent: 0;
+}
+
+.thread .time {
+    color: #999;
+    font-size: 0.8em;
+    margin-right: 0;
+    float: right;
+}
+.thread .comment-body .ctx {
+    background-color: #ffffee;
+    border-left: 3px solid #d0d0d0;
+	margin: 0.45em 0;
+	padding: 0;
+}
+.ctx .ctx-entry {
+    border-bottom: 1px solid #d0d0d0;
+    margin: 0;
+    padding: 0.4em;
+}
+.ctx .ctx-body {
+    margin-left: 0px;
+}
+.ctx .ctx-head {
+    line-height: 1em;
+    margin: 0 0 0.25em;
+    padding: 1px 0 0;
+}
+.ctx .ctx-head .ctx-username {
+    color: #0284ff;
+    font-size: 0.9em;
+}
+.ctx .ctx-head .ctx-nth {
+    color: #999;
+    font-size: 0.8em;
+    float: right;
+}
+.ctx .ctx-content {
+    font-size: 1em;
+    line-height: 1.5em;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+}
+.thread .comment-body img {
+    max-width: 100%;
+    vertical-align: text-bottom;
+}
+.thread img.smiley {
+    border: medium none;
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <div id="main">
+        </div>
+    </div>
+	<input id="now_comment_reply" type="hidden" value="">
+	
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script> 
+<script>
+$api.setStorage('comment_list_page', 1);
+
+apiready = function () {
+	getList(1, 'first');	// 首次加载
+	
+	// 下拉刷新
+	api.setRefreshHeaderInfo({
+	    visible: true,
+	    loadingImg: 'widget://image/pulltorefresh_arrow.png',
+	    bgColor: '#ccc',
+	    textColor: '#fff',
+	    textDown: '下拉刷新...',
+	    textUp: '松开刷新...',
+	    showTime: true
+	}, function(ret, err){
+	    //从服务器加载数据，完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+	    getList(1, 'refresh');
+	});
+	
+	// 页面滑动到底部加载更多
+	api.addEventListener({
+		name:'scrolltobottom'
+	},function(ret,err){
+		var page = $api.getStorage('comment_list_page');
+		if(page > 1){
+			getList(page, 'more');
+		}
+	    
+	});
+}
+
+function getList(page, type){
+	api.showProgress({
+	    style: 'default',
+	    animationType: 'fade',
+	    title: '努力加载中...',
+	    text: '先喝杯茶...',
+	    modal: false
+	});
+
+	var pageParam = api.pageParam;	
+	api.ajax({
+		url: OpenAPI.comment_list,
+		method: 'post',
+		timeout: 30,
+		dataType: 'json',
+		data:{
+			values: {
+				access_token: $api.getStorage('access_token'),
+				id: pageParam.id,
+				catalog: pageParam.catalog,
+				page: page,
+				pageSize: 20,
+				dataType: 'json',
+			},
+		},
+		returnAll:false,
+	    
+	},function(ret,err){
+	    if (ret) {
+	    //log(ret.commentList);
+	    	var html = '';
+         	if("undefined" != typeof ret.commentList){
+	            var tpl = '<div class="thread"><ul class="comments">{{for(var i=0,len=it.length;i<len;i++){}}<li data-post-id="{{=it[i].id}}" class="post" onclick="comment_reply('+pageParam.id+','+pageParam.catalog+' , {{=it[i].id}}, \'{{=it[i].commentAuthorId}}\', \'{{=it[i].commentAuthor}}\')"><div class="post-self"><div data-user-id="{{=it[i].commentAuthorId}}"class="avatar">{{ if(it[i].commentAuthorId){ }}<img src="{{=it[i].commentPortrait}}"/>{{ }else{ }} <img src="../image/dface.png" /> {{ } }}</div><div class="comment-body"><div class="comment-header"><span data-user-id="{{=it[i].commentAuthorId}}"class="user-name">{{ if(it[i].commentAuthorId){ }}{{=it[i].commentAuthor}}{{ }else{ }} 匿名(非会员) {{ } }}</span><span class="time">{{=friendly_time(it[i].pubDate)}}</span></div>{{if(it[i].refers.length>0){}}<ol class="ctx">{{for(var j=0,len2=it[i].refers.length;j<len2;j++){}}<li class="ctx-entry"><div class="ctx-body"><div class="ctx-head"><span class="ctx-username">{{=it[i].refers[j].refertitle}}</span><span class="ctx-nth">{{=(j+1)}}楼</span></div><div class="ctx-content">{{=it[i].refers[j].referbody}}</div></div></li>{{}}}</ol>{{}}}<p>{{=it[i].content}}</p></div></div></li>{{}}}</ul></div>';
+	            var tempFn = doT.template(tpl);
+	            html = tempFn(ret.commentList);
+				// 处理表情
+				html = html.replace(/\/js\/ke\/plugins\/emoticons\//g, "../image/face/smiley_");
+				html = html.replace(/\.gif" alt="/g, ".png\" width=\"22px\" height=\"22px\" alt=\"");
+				//log(html);
+		        if(page > 1 && type=='more'){
+		        	$api.append($api.dom('#main'),html );
+		        }else{
+		        	$api.html($api.dom('#main'), html);
+		        }
+            }else{
+				api.toast({
+				    msg: '已全部加载',
+				    duration:2000,
+				    location: 'middle '
+				});
+            }
+
+            api.parseTapmode();
+	        $api.setStorage('comment_list_page', parseInt(page)+1);
+	        
+	        if(type == 'refresh'){
+	        	api.refreshHeaderLoadDone();
+	        	$api.setStorage('comment_list_page', 2);
+	        }
+	    }else {
+	        if(type == 'refresh'){
+	        	api.refreshHeaderLoadDone();
+	        }
+			api.toast({
+			    msg: '获取失败',
+			    duration:2000,
+			    location: 'middle '
+			});
+	    };
+	    api.hideProgress();
+	});
+
+}
+
+function refreshComment(){
+	getList(1, 'refresh');
+}
+
+function comment_reply(id, catalog, receiver , commentAuthorId, commentAuthor){
+	if(!commentAuthorId){	// 匿名会员不能回复
+		api.execScript({
+		    name: 'win_comment_list',
+		    script: 'comment_pub('+id+', '+catalog+')',
+		});
+	}else{
+		var now_comment_reply = $('#now_comment_reply').val();
+		if(now_comment_reply != commentAuthorId){
+			$('#now_comment_reply').val(commentAuthorId);
+			api.execScript({
+			    name: 'win_comment_list',
+			    script: 'comment_reply('+id+', '+catalog+', '+commentAuthorId+', '+receiver+', "'+commentAuthor+'");',
+			});
+		}else{	// 取消回复某人
+			$('#now_comment_reply').val('');
+			api.execScript({
+			    name: 'win_comment_list',
+			    script: "comment_pub('', '');",
+			});
+		}
+	
+	
+
+	}
+
+
+}
+</script>
+</body>
+</html>

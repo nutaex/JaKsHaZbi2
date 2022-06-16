@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/common.css"/>
+    <style>
+    .list{
+    	background-color: #FFFFFF;
+    }
+    .list .item{
+    	border-bottom: 1px solid #ebebeb;
+    	padding: 0.7em 0.7em 0.8em 0.6em;
+    }
+    .list .itemActive{
+    	background-color: #efefef;
+    }
+    .list .item .title{
+    	color: #333333;
+    	font-size: 1.1em;
+    	line-height: 1.3em;
+    	word-break: break-all; word-wrap:break-word;	/* 自动换行 */
+    }
+    .list .item .title img{
+		width: 0.8em;
+		height: 0.8em;
+		vertical-align:middle;
+		padding-right:0.2em;
+    }
+    .list .item .subTitle{
+    	color: #9a9a9a;
+    	font-size: 0.8em;
+    	line-height: 1.5em;
+    	padding: 0.4em 0 0.5em 0;
+    }
+    .list .item .info{
+    	font-size: 0.7em;
+    	padding-top: 0.8em;
+    }
+    .list .item .info span{
+    	color: #9a9a9a;
+    	margin-right: 0.5em;
+    }
+    </style>
+</head>
+<body>
+<div id="wrap">
+	<div class="list" id="list">
+	
+		<!--div class="item"  tapmode="itemActive" onclick="openItem()">
+			<div class="title">
+				<img src="../image/today.png"/>像谈恋爱那样去招顶级程序员吧！
+			</div>
+			<div class="subTitle">
+				Coursera的首席产品经理John Ciancutti在1999年加入Netflix担任工程师，那时候它只是由……
+			</div>
+			<div class="info">
+				<span class="author">oschina</span><span class="time">4小时前</span><span class="commentCount">1评论</span>
+			</div>
+		</div-->
+	</div>
+	
+</div>
+
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+$api.setStorage('blog_list_page', 1);	// 不知道为什么不能使用全局变量标记页数，所以这样搞了
+apiready = function () {
+
+//	var pageParam = api.pageParam;
+//	var y = pageParam.news_blog_group_height;
+
+	getList(1, 'first');	// 首次加载
+	
+	// 下拉刷新
+	api.setRefreshHeaderInfo({
+	    visible: true,
+	    loadingImg: 'widget://image/pulltorefresh_arrow.png',
+	    bgColor: '#ccc',
+	    textColor: '#fff',
+	    textDown: '下拉刷新...',
+	    textUp: '松开刷新...',
+	    showTime: true
+	}, function(ret, err){
+	    //从服务器加载数据，完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+	    getList(1, 'refresh');
+	});
+	
+	// 页面滑动到底部加载更多
+	api.addEventListener({
+		name:'scrolltobottom'
+	},function(ret,err){
+		var page = $api.getStorage('blog_list_page');
+		if(page > 1){
+			getList(page, 'more');
+		}
+	    
+	})
+	
+};
+
+
+function getList(page, type){
+
+	//log(page+': '+type);
+	var html = '';	
+	api.ajax({
+
+	    
+		url: OpenAPI.news_blog,
+		method: 'post',
+		timeout: 30,
+		dataType: 'json',
+		data:{
+			values: {
+				access_token: $api.getStorage('access_token'),
+				pageSize: '20',
+				dataType: 'json',
+				page: page,
+			},
+		},
+		returnAll:false,
+	    
+	},function(ret,err){
+	    if (ret) {
+	    	var data=new Array();
+	    	var list = ret.bloglist;
+			for(var i=0;i<list.length;i++){
+				var jin = '';
+				if(list[i]['type']==1){
+					jin = '<img src="../image/original.png"/>';
+				}else if(list[i]['type']==4){
+					jin = '<img src="../image/repaste.png"/>';
+				}
+				html += '<div class="item" tapmode="itemActive" onclick="openItem(0,\''+list[i]["title"]+'\',3,'+list[i]["id"]+',\'\')">'+
+						'<div class="title">'+jin+list[i]["title"]+'</div>'+
+						//'<div class="subTitle">Coursera的首席产品经理John Ciancutti在1999年加入Netflix担任工程师，那时候它只是由……</div>'+
+						'<div class="info">'+
+						'<span class="author">'+list[i]["author"]+'</span><span class="time">'+adjustDate(list[i]["pubDate"])+'</span><span class="commentCount">'+list[i]["commentCount"]+'评论</span>'+
+						'</div>'+
+						'</div>';
+			}
+	        //console.log(JSON.stringify(ret));
+	        if(page > 1 && type=='more'){
+	        	$api.append($api.dom('#list'), html);
+	        }else{
+	        	$api.html($api.dom('#list'), html);
+	        }
+	        api.parseTapmode();
+	        $api.setStorage('blog_list_page', parseInt(page)+1);
+	        
+	        if(type == 'refresh'){
+	        	api.refreshHeaderLoadDone();
+	        	$api.setStorage('blog_list_page', 2);
+	        }
+	        
+
+	    }else {
+	        if(type == 'refresh'){
+	        	api.refreshHeaderLoadDone();
+	        }
+			api.toast({
+			    msg: '获取失败',
+			    duration:2000,
+			    location: 'middle '
+			});
+	    };
+
+	});
+}
+
+</script>
+</body>
+</html>

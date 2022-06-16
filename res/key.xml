@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<security>
+    <item name="client_id" value="填写client_id"/>
+    <item name="client_secret" value="填写client_secret"/>
+    <item name="redirect_uri" value="填写redirect_uri"/>
+</security>

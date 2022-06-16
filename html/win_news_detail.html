@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="css/api.css"/>
+    <link rel="stylesheet" href="./css/common.css">
+    <style>
+        html,body,header,section,footer,nav,div,ul,ol,li,img,a,span,em,del,center,strong,var,fieldset,form,label,dt,dd,cite,input,hr,time,mark,code,figcaption,figure,textarea{
+            margin:0;
+            border:0;
+            padding:0;
+
+        }
+        html,body {
+            height: 100%;
+            width: 100%;
+            -webkit-touch-callout:none;
+            -webkit-text-size-adjust:none;
+            -webkit-tap-highlight-color:rgba(0, 0, 0, 0);
+            -webkit-user-select:none;
+        }
+
+        #wrap {
+            height: 100%;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-flex-flow: column;
+            flex-flow: column;
+        }
+
+        #main {
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+        }
+        
+        header,footer,section,nav,img,a,button,em,del,strong,var,fieldset,label,cite,small,time,mark,code,figcaption,figure,textarea{
+            display:block;
+        }
+        header,section,footer,nav {
+            position:relative;
+            overflow:hidden;
+        }
+        ol,ul{
+            list-style:none;
+        }
+        input,button,textarea {
+            border:0;
+            margin:0;
+            padding:0;
+            font-size:1em;
+            line-height:1em;
+            -webkit-appearance:none;
+            background-color:rgba(0, 0, 0, 0);
+        }
+        span{
+            display:inline-block;
+        }
+        a,a:visited{
+            text-decoration:none;
+        }
+
+        #header {
+            background-color:#40aa53;
+        }
+        #nav{
+            display:-webkit-box;
+            height:44px;
+        }
+        #left {
+            width:80px;
+            color:#fff;
+            background:url(../image/navbtn_back.png) no-repeat 14px 12px;
+            -webkit-background-size:12px 20px;
+        }
+        #left>span {
+            margin-top:13px;
+            margin-left:36px;
+            font-size:18px;
+            height:18px;
+            line-height:18px;
+        }
+        #middle {
+            -webkit-box-flex:1;
+            width:100%;
+            display:-webkit-box;
+            -webkit-box-pack:center;
+            -webkit-box-align:center;
+        }
+        #title {
+        	font-size: 20px; height: 44px; margin: 0em; color: #fff;
+            line-height:40px;
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+            text-align: center;
+        }
+        #right {
+            width:80px;
+        }
+        section {
+            -webkit-box-flex:1;
+        }
+        
+        
+
+
+
+
+
+        #footer {
+            width: 100%;
+            text-align: center;
+            height:44px;
+            line-height: 43px;
+            background-color: #ffffff;
+        }
+
+        ul {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+        }
+
+        .write {
+            background-image: url(../image/ic_action_write_normal.png);
+        }
+        
+        .review {
+            background-image: url(../image/review_toolbar_normal.png);
+        }
+
+        .favor {
+            background-image: url(../image/ic_action_favor_normal.png);
+        }
+
+        .repost {
+            background-image: url(../image/ic_action_repost_normal.png);
+        }
+
+        #footer li {
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+            height: 43px;
+        }
+
+        .bottom_btn {
+            background-position-y: 4px;
+            font-size: 12px;
+            color: #323237;
+            width: 99%;
+            height: 40px;
+            background-repeat: no-repeat no-repeat;
+            background-position-x: center;
+            background-size: 30px;
+            padding-top: 0;
+        }
+        
+        .active .write {
+            background-image: url(../image/ic_action_write_pressed.png);
+        }
+
+        .active .review {
+            background-image: url(../image/review_toolbar_pressed.png);
+        }
+
+        .active .favor {
+            background-image: url(../image/ic_action_favor_pressed.png);
+        }
+
+        .active .repost {
+            background-image: url(../image/ic_action_repost_pressed.png);
+        }
+
+        .active .bottom_btn {
+            color: #6ab494;
+            background-size: 30px;
+        }
+        
+        .superscript{
+            height: 14px;
+			position:relative;
+			left:12px;
+			bottom:14px;
+			z-index:1;
+			background-color: #40aa53;
+			color: #ffffff;
+			font-size: 8px;
+			line-height:15px;
+			padding: 0 3px
+        }
+
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <header id='header'>
+        <nav id="nav">
+            <a id="left" onclick="api.closeWin();">
+                <span>返回</span>
+            </a>
+            <div id="middle" onclick="closeInputField()">
+                <div id="title">资讯详情</div>
+            </div>
+            <a id="right">
+            </a>
+        </nav>
+    </header>
+    <div id="main">
+    </div>
+    <div id="footer">
+        <ul>
+            <li tapmode="active" onclick="writeComment()">
+				<span class="bottom_btn write"></span>
+            </li>
+
+            <li tapmode="active" onclick="open_comment_list()">
+            	<span class="bottom_btn review"><span id="commentCount" class="superscript">0</span></span>
+            </li>
+
+            <li tapmode="active" onclick="randomSwitchBtn(this,'dev',2)">
+            	<span class="bottom_btn favor"></span>
+            </li>
+
+            <li tapmode="active" onclick="randomSwitchBtn(this,'doc',3)">
+            	<span class="bottom_btn repost"></span>
+            </li>
+            
+        </ul>
+    </div>
+	<input id="id" type="hidden" value="0">
+</div>
+
+</body>
+<script src="../script/api.js"></script>
+<script src="../script/zepto.min.js"></script>
+<script src="../script/config.js"></script>
+<script src="../script/common.js"></script>
+<script>
+apiready = function() {
+    var header = $api.byId('header');
+    var body = $api.dom('body');
+    var footer = $api.byId('footer');
+    
+    $api.fixIos7Bar(header);
+    
+    var header_h = $api.offset(header).h;
+    var body_h = $api.offset(body).h;
+    var footer_h = $api.offset(footer).h;
+    var rect_h = body_h - header_h - footer_h;
+
+    var pageParam = api.pageParam;
+	$('#id').val(pageParam.id);
+	api.openFrame({
+	    name: 'frm_news_detail',
+	    url: './frm_news_detail.html',
+	    rect:{
+            x:0,
+            y:header_h,
+            w:'auto',
+            h:rect_h
+	    },
+	    pageParam: {id: pageParam.id, title:pageParam.title},
+	    bgColor: '#ffffff',
+		    bounces: true,
+		    opaque: false,
+		    vScrollBarEnabled:true,
+		    hScrollBarEnabled:false
+		});
+		
+}
+
+function randomSwitchBtn(){
+
+}
+
+// 设置评论数角标 支持累加
+function setCommentCount(count){
+	count = parseInt($api.html($api.dom('#commentCount'))) + parseInt(count);
+	$api.html($api.dom('#commentCount'), count);
+}
+
+// 直接写评论
+function writeComment(){
+	var obj = api.require('inputField');
+	obj.open({
+	    bgColor:'#ffffff',
+	    lineColor:'#f2f2f2',
+	    borderColor:'#d7d7d7',
+	    fileBgColor:'#fbfbfb',
+	    placeholder:'说点什么',
+	    sendImg:'widget://image/biz_chat_comment_send.png'
+	},function(ret,err) {
+		//log(OpenAPI.comment_pub +'_'+ $api.getStorage('access_token')+'_'+$('#id').val()+'_'+$api.getStorage('comment_catalog')+'_'+ret.msg);
+			api.ajax({
+				url: OpenAPI.comment_pub,
+				method: 'post',
+				timeout: 30,
+				dataType: 'json',
+				data:{
+					values: {
+						access_token: $api.getStorage('access_token'),
+						id: $('#id').val(),
+						catalog: $api.getStorage('comment_catalog'),
+						content: ret.msg,
+					},
+				},
+				returnAll:false,
+			},function(ret,err){
+				//log(ret);
+			    if (ret) {
+					api.toast({
+					    msg: '评论成功',
+					    duration:2000,
+					    location: 'middle '
+					});
+					setCommentCount(1);
+					closeInputField();
+			    }else {
+					api.toast({
+					    msg: '评论失败',
+					    duration:2000,
+					    location: 'middle '
+					});
+			    };
+			});
+		});
+}
+
+function closeInputField(){
+	var obj = api.require('inputField');
+	obj.close();
+}
+
+function open_comment_list(id){
+	api.openWin({
+		name: 'win_comment_list',
+		url: './win_comment_list.html',
+		pageParam: {id: $('#id').val(), catalog:$api.getStorage('comment_catalog')},
+	});
+}
+</script>
+</html>

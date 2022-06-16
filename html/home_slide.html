@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <style>
+        * {
+            outline: 0;
+        }
+        /*header*/
+        header {
+            background-color: #40aa53;
+        }
+
+        .header {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;            
+        }
+        .header a{
+            display: block;
+            background-size: 30px;
+            background-repeat: no-repeat;
+            background-position: center;
+            padding: 20px;
+        }
+        .title {
+        	font-size: 20px; height: 44px; margin: 0em; color: #fff;
+            line-height:40px;
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+            text-align: center;
+        }
+		.header .drawer {
+		    background-image: url("../image/drawer.png");
+		}
+		.header .search {
+		    background-image: url("../image/actionbar_search.png");
+		}
+        /*header*/
+    </style>
+</head>
+<body>
+<header>
+    <div class="index header">
+        <a class="drawer" tapmode="" onclick="sliding()"></a>
+        <div class="title" >
+			综合资讯
+        </div>
+        <a class="search" tapmode="" onclick="search()"></a>
+    </div>
+</header>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+apiready = function () {
+    $api.fixIos7Bar($api.dom('header'));
+    api.addEventListener({
+        name: 'keyback'
+    }, function(ret, err){
+        api.closeWidget();
+    });
+    var y = $("header").height();
+	api.openFrameGroup ({
+	    name: 'main_group',
+	    scrollEnabled:false,
+	    rect:{x: 0, y: y, w: 'auto', h: 'auto'},
+	    index:0,
+	    frames: [
+	        {
+	            name: 'frm_news_blog',
+	            url: 'frm_news_blog.html',
+	            pageParam:{main_group_height:y},
+	        },
+	        {
+	            name: 'frm_post',
+	            url: 'frm_post.html',
+	            pageParam:{main_group_height:y},
+	        },
+	        {
+	            name: 'frm_tweet',
+	            url: 'frm_tweet.html',
+	            pageParam:{main_group_height:y},
+	        },
+	        {
+	            name: 'frm_near_people',
+	            url: 'frm_near_people.html',
+	            pageParam:{main_group_height:y},
+	        },
+	        {
+	            name: 'frm_about_me',
+	            url: 'frm_about_me.html',
+	            pageParam:{main_group_height:y},
+	        },
+	        {
+	            name: 'frm_more',
+	            url: 'frm_more.html',
+	            pageParam:{main_group_height:y},
+	        }
+	    ]
+	}, function(ret, err){
+	    var name = ret.name;
+	    var index = ret.index;
+	});
+};
+
+function sliding() {
+    api.openSlidPane({type: 'left'});
+}
+	
+function setFrameGroupIndex(index, title) {
+	if (title) {
+		$(".title").html(title);
+	}
+	
+	// 隐藏所有子组
+	for(var i=0; i<=5; i++){
+		api.setFrameGroupAttr({
+		    name: 'group_' + i,
+		    hidden:true
+		});
+	}
+
+    api.setFrameGroupIndex({
+        name: 'main_group',
+        index: index
+    });
+	api.setFrameGroupAttr({
+	    name: 'group_'+index,
+	    hidden:false
+	});
+}
+
+function test(){
+	api.ajax({
+	    url: 'http://www.oschina.net/action/api/login_validate',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'xml',
+		data:{
+			values: {
+				username: '',
+				pwd: '',
+				keep_login: '1',
+			},
+		},
+	    returnAll:false,
+	},function(ret,err){
+	    if (ret) {
+			log(ret);
+	    }else {
+			api.toast({
+			    msg: '获取失败',
+			    duration:2000,
+			    location: 'middle '
+			});
+	    };
+	});
+}
+</script>
+</body>
+</html>

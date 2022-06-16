@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/common.css"/>
+    <style>
+		html,body{
+		    height: auto;
+		}
+		#main{
+		    padding: 0.8em 0.6em; color: #4c4c4c;
+		}
+		#main h1{
+		    font-size: 1.25em;
+		}
+		#main label{
+		    font-size: 0.8em; color: #4c4c4c; padding: 0.8em 0;
+		    border-bottom: 1px solid #d9d9d9; display: block;
+		    margin-bottom: 0.7em;
+		}
+		#main img{
+		    width: 100%; margin-bottom: 1.25em;
+		}
+		#main p{
+		    font-size: 1.1em; line-height: 1.6; margin-bottom: 1.25em;
+		}
+		#summary{
+		    background-color: #e6e6e6; padding: 10px; border-radius: 6px;
+		    margin-bottom: 0.7em; font-size: 0.8em; line-height: 1.6;
+		}
+		#summary:before{
+		    content: "摘要"; display: inline-block; padding: 2px 6px; 
+		    background-color: #40aa53; color: #fff; margin-right: 1em;
+		    border-radius: 4px;
+		}
+    </style>
+</head>
+<body>
+    <div id="wrap" onclick="closeInputField()">
+        <div id="main">
+                <!--h1>数据库要变天！阿里 OceanBase 五年破茧为蝶</h1>
+                <label>oschina
+	                <em> 2015年03月29日</em>
+                </label>
+                <div id="summary">
+                	之前我一篇文章预测阿里、百度、腾讯未来将是IT硬件厂商的最大对手，今天看到一则消息，淘宝顶级科学家阳振坤微博号@阿里正祥 ，发出一则消息。“从上周五开始，淘宝/天猫/聚划算在支付宝上的交易，100%都在OceanBase上了。你可能没有什么感觉。”
+            	</div>
+            	<div id="content">
+            		<p>可 以想象马云当时是多么火大，你收我那么多钱，跟我阿里的理念完全相反啊。我成本无限高，我怎么服务中小企业!必须上马。@阿里正祥表示：目前 OceanBase做到了商业数据库成本的一半以下，这得益于OceanBase不再需要昂贵的共享存储、高可靠的服务器、数据库软件的许可费。 OceanBase还有很大的性能提升空间和成本降低空间。</p>
+            	</div-->
+        	
+        </div>
+    </div>
+
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/shCore.js"></script>
+<script type="text/javascript" src="../script/brush.js"></script>
+<link rel="stylesheet" type="text/css" href="../css/shCore.css"/>
+<link rel="stylesheet" type="text/css" href="../css/shThemeDefault.css"/>
+<script>
+apiready = function () {
+	api.showProgress({
+	    style: 'default',
+	    animationType: 'fade',
+	    title: '努力加载中...',
+	    text: '先喝杯茶...',
+	    modal: false
+	});
+
+	var pageParam = api.pageParam;
+	var html = '';	
+	api.ajax({
+		url: OpenAPI.news_detail,
+		method: 'post',
+		timeout: 30,
+		dataType: 'json',
+		data:{
+			values: {
+				access_token: $api.getStorage('access_token'),
+				id: pageParam.id,
+				dataType: 'json',
+			},
+		},
+		returnAll:false,
+	    
+	},function(ret,err){
+	    if (ret) {
+			//log(ret);
+	        html += '<h1>'+pageParam.title+'</h1>'+
+	                '<label>'+ret.author+
+		            '&nbsp;&nbsp;&nbsp;<em>'+friendly_time(ret.pubDate)+'</em>'+
+	                '</label>'+
+	                //<div id="summary"></div>
+	            	'<div id="content">'+ret.body+'</div>';
+			api.execScript({name: 'win_news_detail', script: 'setCommentCount('+ret.commentCount+')'});		// 显示评论角标
+	        $api.html($api.dom('#main'), html);
+	        
+	        SyntaxHighlighter.highlight();	// 代码高亮
+	    }else {
+			api.toast({
+			    msg: '获取失败',
+			    duration:2000,
+			    location: 'middle '
+			});
+	    };
+	    api.hideProgress();
+	});
+}
+
+function closeInputField(){
+	api.execScript({name: 'win_news_detail', script: 'closeInputField()'});
+}
+</script>
+</body>
+</html>
