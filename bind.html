@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>授权成功</title>
+</head>
+<body>
+<h3>授权成功</h3>
+</body>
+<script>
+apiready = function() {
+    api.closeWidget({
+        id: 'OSC',
+        retData: {code:getQueryString("code"), state:getQueryString("state")},
+        animation: {
+            type: 'flip',
+            subType: 'from_bottom',
+            duration: 500
+        }
+    });
+}
+
+
+function getQueryString(name) {
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+	var r = window.location.search.substr(1).match(reg);
+	if (r != null) return unescape(r[2]); return null;
+}
+</script>
+</html>
