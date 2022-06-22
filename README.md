@@ -3,10 +3,14 @@
 由于作者是搞 PHP 的，前端技术实在很菜，所以代码拼拼凑凑的，还请大家见谅。
 
 ### 使用说明
-由于本项目尚未开发完成，还有大量功能未实现，所以在使用时会遇到大量打不开、空内容的情况。
+**由于本项目尚未开发完成，还有大量功能未实现，所以在使用时会遇到大量打不开、空内容的情况。**
+
+### 编译说明
+1. 申请自己的 [OpenAPI](http://http://www.oschina.net/openapi) 应用，并配置（需要一个回调页，我是用 OSC@GIT 的演示平台搞的，大家也可直接使用，地址是：http://bind.oschina.mopaas.com/bind.html）。
+2. 配置应用 OAuth2.0 授权信息。有两个配置的地方，一是在 /res/key.xml 中配置，当项目通过 APICloud **云编译后**，此配置文件会加密存放，保证你的应用安全；二是在  /script/config.js 中配置，此配置是为了方便IDE“一键真机同步测试”用的，由于这种调试方式不支持上面的 key.xml 加密与解密，所以就做个这种开发测试用的配置。如果使用第二种配置，APP_DEBUG 请设为 true。如果使用第一种配置，请把 APP_DEBUG 请设为 false，并清空js方式的配置。
 
 ### 接口 BUG 列表
-OSChina的 [OpenAPI](http://http://www.oschina.net/openapi) 存在很多BUG和缺陷，所以备注下
+OSChina 的 [OpenAPI](http://http://www.oschina.net/openapi) 存在很多BUG和缺陷，所以备注下
 
 1. [blog_list](http://www.oschina.net/openapi/docs/post_detail) 返回的 pubDate 时间格式不对，多了 .0
 2. [news_list](http://http://www.oschina.net/openapi/docs/news_list) 新闻列表没有信息简介
