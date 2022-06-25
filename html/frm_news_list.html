@@ -107,8 +107,13 @@ apiready = function () {
 
 
 function getList(page, type){
-	//$('.spinner').show();
-	//log(page+': '+type);
+	api.showProgress({
+	    style: 'default',
+	    animationType: 'fade',
+	    title: '努力加载中...',
+	    text: '先喝杯茶...',
+	    modal: false
+	});
 	var html = '';	
 	api.ajax({
 		url: OpenAPI.news_list,
@@ -168,9 +173,10 @@ function getList(page, type){
 			api.toast({
 			    msg: '获取失败',
 			    duration:2000,
-			    location: 'middle '
+			    location: 'middle'
 			});
 	    };
+	    api.hideProgress();
 	    
 	});
 }
