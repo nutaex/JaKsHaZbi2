@@ -33,39 +33,11 @@
 	var client_id, client_secret, redirect_uri;
 	
     apiready = function () {
-    /*
-        if(APP_DEBUG){	// 调试模式使用 config.js 里面的测试配置
-        	client_id 		= API_client_id;
-        	client_secret 	= API_client_secret;
-        	redirect_uri 	= API_redirect_uri;
-        }else{			// 正式云编译使用 key.xml 里面的加密配置 从而有效保护应用的私钥
-			api.loadSecureValue({
-				key:'client_id'
-			}, function(ret, err) {
-			    client_id = ret.client_id;
-			});
-			api.loadSecureValue({
-				key:'client_secret'
-			}, function(ret, err) {
-			    client_secret = ret.client_secret;
-			});
-			api.loadSecureValue({
-				key:'redirect_uri'
-			}, function(ret, err) {
-			    redirect_uri = ret.redirect_uri;
-			});
-        }
-    
-    
-    	var pageParam = api.pageParam;
-    	if(pageParam.from != 'login'){	// 如果不是刚刚完成授权登录的，刷新 AccessToken
-    		refreshToken();
-    	}
-    	*/
+
         if($api.getStorage('access_token')) {
             api.openSlidLayout({
                 type: 'left',
-                leftEdge: (api.winWidth / 5) * 3,
+                leftEdge: api.winWidth / 3,
                 fixedPane: {
                     name: 'home_fixed',
                     url: './html/home_fixed.html'
