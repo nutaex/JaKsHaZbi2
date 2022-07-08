@@ -31,12 +31,15 @@ function openItem(id, title, type, object, url){
 	  break;
 	case 1:	// 软件推荐
 	  $api.setStorage('comment_catalog', -1);	// 记录评论列表类型	软件评论接口不支持
+	  $api.setStorage('favorite_type', 1);	// 记录收藏对象类型 [1-软件,2-帖子（问答、话题）,3-博客,4-资讯,5-代码,7-翻译]
 	  break;
 	case 2:	// 讨论区帖子
 	  $api.setStorage('comment_catalog', 2);	// 记录评论列表类型	帖子
+	  $api.setStorage('favorite_type', 2);
 	  break;
 	case 3:	// 博客
 		$api.setStorage('comment_catalog', 5);	// 记录评论列表类型	 博客
+		$api.setStorage('favorite_type', 3);
 		api.openWin({
 		    name: 'win_blog_detail',
 		    url: './win_blog_detail.html',
@@ -45,6 +48,7 @@ function openItem(id, title, type, object, url){
 	  break;
 	case 4:	// 普通新闻
 		$api.setStorage('comment_catalog', 1);	// 记录评论列表类型	新闻/翻译
+		$api.setStorage('favorite_type', 4);
 		api.openWin({
 		    name: 'win_news_detail',
 		    url: './win_news_detail.html',
@@ -53,6 +57,7 @@ function openItem(id, title, type, object, url){
 	  break;
 	case 5:	// 翻译文章
 	  $api.setStorage('comment_catalog', 1);	// 记录评论列表类型	新闻/翻译
+	  $api.setStorage('favorite_type', 7);
 	  break;
 	}
     
@@ -91,6 +96,110 @@ function tokenExpires(statusCode){
 	}else{
 		return false;
 	}
+}
+
+// 设置收藏图标
+function setFavor(status){
+	$('#favor').attr('onclick', '');
+	if( status==0 ){	// 未收藏
+		$('#favor').attr('onclick', 'favorite_add()');
+		$('#bottom_btn_favor').removeClass("bottom_btn favored");
+		$('#bottom_btn_favor').addClass("bottom_btn favor");
+	}else{	// 已收藏
+		$('#favor').attr('onclick', 'favorite_remove()');
+		$('#bottom_btn_favor').removeClass("bottom_btn favor");
+		$('#bottom_btn_favor').addClass("bottom_btn favored");
+	}
+}
+
+/*
+ * 收藏
+ * @param  long id  被收藏对象id
+ * @param  int type 被收藏对象类型 [1-软件,2-帖子（问答、话题）,3-博客,4-资讯,5-代码,7-翻译]
+ */
+function favorite_add(id, type){
+    if(arguments.length === 1){
+        type = $api.getStorage('favorite_type');
+    }else if(arguments.length === 0){
+        id = $('#id').val();
+        type = $api.getStorage('favorite_type');
+    }
+	setFavor(1);
+	api.ajax({
+		url: OpenAPI.favorite_add,
+		method: 'post',
+		timeout: 30,
+		dataType: 'json',
+		data:{
+			values: {
+				access_token: $api.getStorage('access_token'),
+				id: id,
+				type: type,
+				dataType: OpenAPI.dataType,
+			},
+		},
+		returnAll:false,
+	},function(ret,err){
+	    if (ret.error == 200) {
+			api.toast({
+			    msg: '收藏成功',
+			    duration:2000,
+			    location: 'middle'
+			});
+	    }else {
+	    	setFavor(0);
+			api.toast({
+			    msg: '收藏失败',
+			    duration:2000,
+			    location: 'middle'
+			});
+	    };
+	});
+}
+
+/*
+ * 取消收藏
+ * @param  long id  被收藏对象id
+ * @param  int type 被收藏对象类型 [1-软件,2-帖子（问答、话题）,3-博客,4-资讯,5-代码,7-翻译]
+ */
+function favorite_remove(id, type){
+    if(arguments.length === 1){
+        type = $api.getStorage('favorite_type');
+    }else if(arguments.length === 0){
+        id = $('#id').val();
+        type = $api.getStorage('favorite_type');
+    }
+    setFavor(0);
+	api.ajax({
+		url: OpenAPI.favorite_remove,
+		method: 'post',
+		timeout: 30,
+		dataType: 'json',
+		data:{
+			values: {
+				access_token: $api.getStorage('access_token'),
+				id: id,
+				type: type,
+				dataType: OpenAPI.dataType,
+			},
+		},
+		returnAll:false,
+	},function(ret,err){;
+	    if (ret.error == 200) {
+			api.toast({
+			    msg: '取消成功',
+			    duration:2000,
+			    location: 'middle'
+			});
+	    }else {
+	    	setFavor(1);
+			api.toast({
+			    msg: '取消失败',
+			    duration:2000,
+			    location: 'middle'
+			});
+	    };
+	});
 }
 
 /*
@@ -167,6 +276,7 @@ function adjustDate(date){
 	return friendly_time(date);
 }
 
+// 数组去重 (还没用到)
 function unique(arr) {
     var result = [], hash = {};
     for (var i = 0, elem; (elem = arr[i]) != null; i++) {
@@ -176,5 +286,4 @@ function unique(arr) {
         }
     }
     return result;
-//http://www.cnblogs.com/sosoft/
 }

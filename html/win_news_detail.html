@@ -137,6 +137,9 @@
         .favor {
             background-image: url(../image/ic_action_favor_normal.png);
         }
+        .favored {
+            background-image: url(../image/ic_action_favor_on_normal.png);
+        }
 
         .repost {
             background-image: url(../image/ic_action_repost_normal.png);
@@ -172,7 +175,9 @@
         .active .favor {
             background-image: url(../image/ic_action_favor_pressed.png);
         }
-
+        .active .favored {
+            background-image: url(../image/ic_action_favor_on_pressed.png);
+        }
         .active .repost {
             background-image: url(../image/ic_action_repost_pressed.png);
         }
@@ -223,8 +228,8 @@
             	<span class="bottom_btn review"><span id="commentCount" class="superscript">0</span></span>
             </li>
 
-            <li tapmode="active" onclick="randomSwitchBtn(this,'dev',2)">
-            	<span class="bottom_btn favor"></span>
+            <li id="favor" tapmode="active">
+            	<span id="bottom_btn_favor" class="bottom_btn favor"></span>
             </li>
 
             <li tapmode="active" onclick="randomSwitchBtn(this,'doc',3)">
@@ -337,12 +342,13 @@ function closeInputField(){
 	obj.close();
 }
 
-function open_comment_list(id){
+function open_comment_list(){
 	api.openWin({
 		name: 'win_comment_list',
 		url: './win_comment_list.html',
 		pageParam: {id: $('#id').val(), catalog:$api.getStorage('comment_catalog')},
 	});
 }
+
 </script>
 </html>
