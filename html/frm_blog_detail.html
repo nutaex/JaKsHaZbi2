@@ -39,7 +39,7 @@
     </style>
 </head>
 <body>
-    <div id="wrap">
+    <div id="wrap" onclick="closeInputField()">
         <div id="main">
                 <!--h1>数据库要变天！阿里 OceanBase 五年破茧为蝶</h1>
                 <label>oschina
@@ -64,7 +64,6 @@
 <link rel="stylesheet" type="text/css" href="../css/shCore.css"/>
 <link rel="stylesheet" type="text/css" href="../css/shThemeDefault.css"/>
 <script>
-
 apiready = function () {
 	api.showProgress({
 	    style: 'default',
@@ -73,10 +72,9 @@ apiready = function () {
 	    text: '先喝杯茶...',
 	    modal: false
 	});
-	
-	
+
 	var pageParam = api.pageParam;
-	var html = '';
+	var html = '';	
 	api.ajax({
 		url: OpenAPI.news_blog_detail,
 		method: 'post',
@@ -93,16 +91,15 @@ apiready = function () {
 	    
 	},function(ret,err){
 	    if (ret) {
-			log(ret);
 	        html += '<h1>'+ret.title+'</h1>'+
 	                '<label>'+ret.author+
 		            '&nbsp;&nbsp;&nbsp;<em>'+adjustDate(ret.pubDate)+'</em>'+
 	                '</label>'+
 	                //<div id="summary"></div>
 	            	'<div id="content">'+ret.body+'</div>';
-	       $api.html($api.dom('#main'), html);
-	       SyntaxHighlighter.highlight();	// 代码高亮
-		  
+	        $api.html($api.dom('#main'), html);
+	        SyntaxHighlighter.highlight();	// 代码高亮
+			api.execScript({name: 'win_blog_detail', script: 'setCommentCount('+ret.commentCount+');setFavor('+ret.favorite+');'});		// 显示评论角标; 设置收藏图标
 	    }else {
 			api.toast({
 			    msg: '获取失败',
@@ -110,10 +107,12 @@ apiready = function () {
 			    location: 'middle'
 			});
 	    };
-	    
 	    api.hideProgress();
-	    
 	});
+}
+
+function closeInputField(){
+	api.execScript({name: 'win_blog_detail', script: 'closeInputField()'});
 }
 </script>
 </body>

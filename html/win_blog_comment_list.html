@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="css/api.css"/>
+    <link rel="stylesheet" href="./css/common.css">
+    <style>
+        html,body,header,section,footer,nav,div,ul,ol,li,img,a,span,em,del,center,strong,var,fieldset,form,label,dt,dd,cite,input,hr,time,mark,code,figcaption,figure,textarea{
+            margin:0;
+            border:0;
+            padding:0;
+
+        }
+        html,body {
+            height: 100%;
+            width: 100%;
+            -webkit-touch-callout:none;
+            -webkit-text-size-adjust:none;
+            -webkit-tap-highlight-color:rgba(0, 0, 0, 0);
+            -webkit-user-select:none;
+        }
+
+        #wrap {
+            height: 100%;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-flex-flow: column;
+            flex-flow: column;
+        }
+
+        #main {
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+        }
+        
+        header,footer,section,nav,img,a,button,em,del,strong,var,fieldset,label,cite,small,time,mark,code,figcaption,figure,textarea{
+            display:block;
+        }
+        header,section,footer,nav {
+            position:relative;
+            overflow:hidden;
+        }
+        ol,ul{
+            list-style:none;
+        }
+        input,button,textarea {
+            border:0;
+            margin:0;
+            padding:0;
+            font-size:1em;
+            line-height:1em;
+            -webkit-appearance:none;
+            background-color:rgba(0, 0, 0, 0);
+        }
+        span{
+            display:inline-block;
+        }
+        a,a:visited{
+            text-decoration:none;
+        }
+
+        #header {
+            background-color:#40aa53;
+        }
+        #nav{
+            display:-webkit-box;
+            height:44px;
+        }
+        #left {
+            width:80px;
+            color:#fff;
+            background:url(../image/navbtn_back.png) no-repeat 14px 12px;
+            -webkit-background-size:12px 20px;
+        }
+        #left>span {
+            margin-top:13px;
+            margin-left:36px;
+            font-size:18px;
+            height:18px;
+            line-height:18px;
+        }
+        #middle {
+            -webkit-box-flex:1;
+            width:100%;
+            display:-webkit-box;
+            -webkit-box-pack:center;
+            -webkit-box-align:center;
+        }
+        #title {
+        	font-size: 20px; height: 44px; margin: 0em; color: #fff;
+            line-height:40px;
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+            text-align: center;
+        }
+        #right {
+            width:80px;
+        }
+        section {
+            -webkit-box-flex:1;
+        }
+
+        #footer {
+            width: 100%;
+            height:50px;
+            background-color: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <header id='header'>
+        <nav id="nav">
+            <a id="left" onclick="api.closeWin();">
+                <span>返回</span>
+            </a>
+            <div id="middle">
+                <div id="title">评论列表</div>
+            </div>
+            <a id="right">
+            </a>
+        </nav>
+    </header>
+    <div id="main">
+    </div>
+    <div id="footer">
+    </div>
+</div>
+<input id="id" type="hidden" value="0">
+<input id="catalog" type="hidden" value="0">
+</body>
+<script src="../script/api.js"></script>
+<script src="../script/zepto.min.js"></script>
+<script src="../script/config.js"></script>
+<script src="../script/common.js"></script>
+<script>
+apiready = function() {
+    var header = $api.byId('header');
+    var body = $api.dom('body');
+    var footer = $api.byId('footer');
+    
+    $api.fixIos7Bar(header);
+    
+    var header_h = $api.offset(header).h;
+    var body_h = $api.offset(body).h;
+    var footer_h = $api.offset(footer).h;
+    var rect_h = body_h - header_h - footer_h;
+
+    var pageParam = api.pageParam;
+
+	api.openFrame({
+	    name: 'frm_blog_comment_list',
+	    url: './frm_blog_comment_list.html',
+	    rect:{
+            x:0,
+            y:header_h,
+            w:'auto',
+            h:rect_h
+	    },
+	    pageParam: {id: pageParam.id, catalog:pageParam.catalog},
+	    bgColor: '#ffffff',
+	    bounces: true,
+	    opaque: false,
+	    vScrollBarEnabled:true,
+	    hScrollBarEnabled:false
+		});
+		
+	comment_pub(pageParam.id);
+	
+	$('#id').val(pageParam.id);
+	$('#catalog').val(pageParam.catalog);
+}
+
+// 发表评论
+function comment_pub(id){
+	if(id == ''){	// 参数为空则恢复状态
+		id = $('#id').val();
+	}
+	closeInputField();
+	var obj = api.require('inputField');
+	obj.open({
+	    bgColor:'#ffffff',
+	    lineColor:'#f2f2f2',
+	    borderColor:'#d7d7d7',
+	    fileBgColor:'#fbfbfb',
+	    placeholder:'说点什么',
+	    sendImg:'widget://image/biz_chat_comment_send.png'
+	},function(ret,err) {
+		api.ajax({
+			url: OpenAPI.blog_comment_pub,
+			method: 'post',
+			timeout: 30,
+			dataType: 'json',
+			data:{
+				values: {
+					access_token: $api.getStorage('access_token'),
+					blog: id,
+					content: ret.msg,
+					dataType: 'json',
+				},
+			},
+			returnAll:false,
+		},function(ret,err){
+			log(ret);
+		    if (ret.error == 200) {
+				api.execScript({
+				    name: 'win_blog_comment_list',
+				    frameName: 'frm_blog_comment_list',
+				    script: 'refreshComment();'
+				});
+				comment_pub('');
+		    }else {
+				api.toast({
+				    msg: '评论失败',
+				    duration:2000,
+				    location: 'middle'
+				});
+		    };
+		});
+	});
+}
+
+/*
+ * 回复评论
+ * @param  long id  回复对象id:新闻、翻译id，帖子id，动弹id
+ * @param  long receiver 被回复者的用户id
+ * @param  long replyid 评论id
+ * @param  string author 被回复者名称
+ * @return array
+ */
+function comment_reply(id, receiver, replyid, author){
+	closeInputField();
+	var obj = api.require('inputField');
+	obj.open({
+	    bgColor:'#ffffff',
+	    lineColor:'#f2f2f2',
+	    borderColor:'#d7d7d7',
+	    fileBgColor:'#fbfbfb',
+	    placeholder:'回复 @'+author+'：',
+	    sendImg:'widget://image/biz_chat_comment_send.png'
+	},function(ret,err) {
+		api.ajax({
+			url: OpenAPI.blog_comment_reply,
+			method: 'post',
+			timeout: 30,
+			dataType: 'json',
+			data:{
+				values: {
+					access_token: $api.getStorage('access_token'),
+					blog: id,
+					content: ret.msg,
+					reply_id: replyid,
+					reply_user: receiver,
+					dataType: 'json',
+				},
+			},
+			returnAll:false,
+		},function(ret,err){
+			log(ret);
+		    if (ret.error == 200) {
+				api.execScript({
+				    name: 'win_blog_comment_list',
+				    frameName: 'frm_blog_comment_list',
+				    script: 'refreshComment();'
+				});
+				comment_pub('');
+		    }else {
+				api.toast({
+				    msg: '回复评论失败',
+				    duration:2000,
+				    location: 'middle'
+				});
+		    };
+		});
+	});
+}
+
+function closeInputField(){
+	var obj = api.require('inputField');
+	obj.close();
+}
+</script>
+</html>
