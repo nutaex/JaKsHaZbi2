@@ -153,7 +153,7 @@ apiready = function() {
     var rect_h = body_h - header_h - footer_h;
 
     var pageParam = api.pageParam;
-    //log(pageParam);
+
 	api.openFrame({
 	    name: 'frm_comment_list',
 	    url: './frm_comment_list.html',
@@ -208,7 +208,7 @@ function comment_pub(id, catalog){
 			},
 			returnAll:false,
 		},function(ret,err){
-		    if (ret) {
+		    if (ret.error == 200) {
 				api.execScript({
 				    name: 'win_comment_list',
 				    frameName: 'frm_comment_list',

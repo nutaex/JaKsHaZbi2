@@ -225,24 +225,28 @@ function getList(page, type){
 	    
 	},function(ret,err){
 	    if (ret) {
-	    //log(ret.commentList);
 	    	var html = '';
          	if("undefined" != typeof ret.commentList){
-	            var tpl = '<div class="thread"><ul class="comments">{{for(var i=0,len=it.length;i<len;i++){}}<li data-post-id="{{=it[i].id}}" class="post" onclick="comment_reply('+pageParam.id+','+pageParam.catalog+' , {{=it[i].id}}, \'{{=it[i].commentAuthorId}}\', \'{{=it[i].commentAuthor}}\')"><div class="post-self"><div data-user-id="{{=it[i].commentAuthorId}}"class="avatar">{{ if(it[i].commentAuthorId){ }}<img src="{{=it[i].commentPortrait}}"/>{{ }else{ }} <img src="../image/dface.png" /> {{ } }}</div><div class="comment-body"><div class="comment-header"><span data-user-id="{{=it[i].commentAuthorId}}"class="user-name">{{ if(it[i].commentAuthorId){ }}{{=it[i].commentAuthor}}{{ }else{ }} 匿名(非会员) {{ } }}</span><span class="time">{{=friendly_time(it[i].pubDate)}}</span></div>{{if(it[i].refers.length>0){}}<ol class="ctx">{{for(var j=0,len2=it[i].refers.length;j<len2;j++){}}<li class="ctx-entry"><div class="ctx-body"><div class="ctx-head"><span class="ctx-username">{{=it[i].refers[j].refertitle}}</span><span class="ctx-nth">{{=(j+1)}}楼</span></div><div class="ctx-content">{{=it[i].refers[j].referbody}}</div></div></li>{{}}}</ol>{{}}}<p>{{=it[i].content}}</p></div></div></li>{{}}}</ul></div>';
+	            var tpl = '<div class="thread"><ul class="comments">{{for(var i=0;i<it.length;i++){}}<li data-post-id="{{=it[i].id}}" class="post" onclick="comment_reply('+pageParam.id+','+pageParam.catalog+' , {{=it[i].id}}, \'{{=it[i].commentAuthorId}}\', \'{{=it[i].commentAuthor}}\')"><div class="post-self"><div data-user-id="{{=it[i].commentAuthorId}}"class="avatar">{{ if(it[i].commentAuthorId){ }}<img src="{{=it[i].commentPortrait}}"/>{{ }else{ }} <img src="../image/dface.png" /> {{ } }}</div><div class="comment-body"><div class="comment-header"><span data-user-id="{{=it[i].commentAuthorId}}"class="user-name">{{ if(it[i].commentAuthorId){ }}{{=it[i].commentAuthor}}{{ }else{ }} 匿名(非会员) {{ } }}</span><span class="time">{{=friendly_time(it[i].pubDate)}}</span></div>{{if("undefined" != typeof it[i].refers && it[i].refers.length>0){}}<ol class="ctx">{{for(var j=0;j<it[i].refers.length;j++){}}<li class="ctx-entry"><div class="ctx-body"><div class="ctx-head"><span class="ctx-username">{{=it[i].refers[j].refertitle}}</span><span class="ctx-nth">{{=(j+1)}}楼</span></div><div class="ctx-content">{{=it[i].refers[j].referbody}}</div></div></li>{{}}}</ol>{{}}}<p>{{=it[i].content}}</p></div></div></li>{{}}}</ul></div>';
 	            var tempFn = doT.template(tpl);
 	            html = tempFn(ret.commentList);
 				// 处理表情
 				html = html.replace(/\/js\/ke\/plugins\/emoticons\//g, "../image/face/smiley_");
 				html = html.replace(/\.gif" alt="/g, ".png\" width=\"22px\" height=\"22px\" alt=\"");
-				//log(html);
 		        if(page > 1 && type=='more'){
 		        	$api.append($api.dom('#main'),html );
 		        }else{
 		        	$api.html($api.dom('#main'), html);
 		        }
             }else{
+            	var msg;
+            	if(page == 1){
+            		msg = '尚无评论';
+            	}else{
+            		msg = '已全部加载';
+            	}
 				api.toast({
-				    msg: '已全部加载',
+				    msg: msg,
 				    duration:2000,
 				    location: 'middle'
 				});
