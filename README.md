@@ -18,6 +18,7 @@ OSChina 的 [OpenAPI](http://www.oschina.net/openapi) 存在很多BUG和缺陷�
 
 ### 扫描下载
 ![扫描下载](http://static.oschina.net/uploads/space/2015/0403/185608_t4OG_252582.jpg "扫描下载")
+
 对应版本 2015-04-03 0c86e97f4
 
 ### 预览图
