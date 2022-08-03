@@ -107,13 +107,15 @@ apiready = function () {
 
 
 function getList(page, type){
-	api.showProgress({
-	    style: 'default',
-	    animationType: 'fade',
-	    title: '努力加载中...',
-	    text: '先喝杯茶...',
-	    modal: false
-	});
+	if(type != 'refresh'){
+		api.showProgress({
+		    style: 'default',
+		    animationType: 'fade',
+		    title: '努力加载中...',
+		    text: '先喝杯茶...',
+		    modal: false
+		});
+	}
 	var html = '';	
 	api.ajax({
 		url: OpenAPI.news_list,

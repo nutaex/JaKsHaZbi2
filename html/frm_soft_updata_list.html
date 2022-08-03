@@ -61,8 +61,10 @@
 			</div>
 		</div-->
 	</div>
-
+	
 </div>
+
+
 <script type="text/javascript" src="../script/zepto.min.js"></script>
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript" src="../script/config.js"></script>
@@ -99,18 +101,23 @@ apiready = function () {
 			getList(page, 'more');
 		}
 	    
-	})
-	
+	});
+
 };
 
 
 function getList(page, type){
-	//$('.spinner').show();
-	//log(page+': '+type);
+	if(type != 'refresh'){
+		api.showProgress({
+		    style: 'default',
+		    animationType: 'fade',
+		    title: '努力加载中...',
+		    text: '先喝杯茶...',
+		    modal: false
+		});
+	}
 	var html = '';	
 	api.ajax({
-
-	    
 		url: OpenAPI.news_list,
 		method: 'post',
 		timeout: 30,
@@ -143,7 +150,7 @@ function getList(page, type){
 						'</div>'+
 						'</div>';
 			}
-	        //console.log(JSON.stringify(ret));
+	        console.log(JSON.stringify(ret));
 	        if(page > 1 && type=='more'){
 	        	$api.append($api.dom('#list'), html);
 	        }else{
@@ -156,9 +163,12 @@ function getList(page, type){
 	        	api.refreshHeaderLoadDone();
 	        	$api.setStorage('soft_updata_list_page', 2);
 	        }
-	        
-
+	        //$api.setStorage('access_token','0365931e-1e23-48b8-a7f7-1351341bc5ee');
 	    }else {
+	    	log('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode);
+	        if( tokenExpires(err.statusCode) ){
+	        	return false;
+	        }
 	        if(type == 'refresh'){
 	        	api.refreshHeaderLoadDone();
 	        }
@@ -168,10 +178,10 @@ function getList(page, type){
 			    location: 'middle'
 			});
 	    };
-	    //$('.spinner').hide();
+	    api.hideProgress();
+	    
 	});
 }
-
 
 function isToday(pubDate)
 {

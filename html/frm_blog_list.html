@@ -107,7 +107,16 @@ apiready = function () {
 
 function getList(page, type){
 
-	//log(page+': '+type);
+	if(type != 'refresh'){
+		api.showProgress({
+		    style: 'default',
+		    animationType: 'fade',
+		    title: '努力加载中...',
+		    text: '先喝杯茶...',
+		    modal: false
+		});
+	}
+	
 	var html = '';	
 	api.ajax({
 
@@ -170,7 +179,7 @@ function getList(page, type){
 			    location: 'middle'
 			});
 	    };
-
+		api.hideProgress();
 	});
 }
 
