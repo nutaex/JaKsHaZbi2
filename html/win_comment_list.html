@@ -117,7 +117,7 @@
 <div id="wrap">
     <header id='header'>
         <nav id="nav">
-            <a id="left" onclick="api.closeWin();">
+            <a id="left" onclick="closeWin()">
                 <span>返回</span>
             </a>
             <div id="middle">
@@ -184,6 +184,69 @@ function comment_pub(id, catalog){
 		catalog = $('#catalog').val();
 	}
 	closeInputField();
+	var chatBox = api.require('chatBox');
+	chatBox.open({
+	    switchButton:{
+	        "faceNormal": "widget://image/chatBox/face1.png",
+	        "faceHighlight": "widget://image/chatBox/face2.png",
+	        "addNormal": "widget://image/chatBox/add1.png",
+	        "addHighlight": "widget://image/chatBox/add2.png",
+	        "keyboardNormal": "widget://image/chatBox/key1.png",
+	        "keyboardHighlight": "widget://image/chatBox/key2.png"
+	    },
+	    sourcePath:"widget://image/chatBox/emotion",
+		placeholder: "说点什么",
+		maxLines: 4,
+	    addButtons: [
+//	        {
+//	            "normal": "widget://image/chatBox/cam1.png",
+//	            "highlight": "widget://image/chatBox/cam2.png",
+//	            "title": "图片"
+//	        },
+//	        {
+//	            "normal": "widget://image/chatBox/loc1.png",
+//	            "highlight": "widget://image/chatBox/loc2.png",
+//	            "title": "位置"
+//	        }
+	    ]
+	},function(ret,err){
+	if(ret.click){
+	    //api.alert({msg:"用户点击了第"+ret.index+"个按钮"});
+	}else{
+			api.ajax({
+				url: OpenAPI.comment_pub,
+				method: 'post',
+				timeout: 30,
+				dataType: 'json',
+				data:{
+					values: {
+						access_token: $api.getStorage('access_token'),
+						id: id,
+						catalog: catalog,
+						content: ret.msg,
+					},
+				},
+				returnAll:false,
+			},function(ret,err){
+			    if (ret.error == 200) {
+					api.execScript({
+					    name: 'win_comment_list',
+					    frameName: 'frm_comment_list',
+					    script: 'refreshComment();'
+					});
+					comment_pub('', '');
+			    }else {
+					api.toast({
+					    msg: '评论失败',
+					    duration:2000,
+					    location: 'middle'
+					});
+			    };
+			});
+	    }
+	});
+	
+	/*
 	var obj = api.require('inputField');
 	obj.open({
 	    bgColor:'#ffffff',
@@ -223,7 +286,7 @@ function comment_pub(id, catalog){
 				});
 		    };
 		});
-	});
+	});*/
 }
 
 /*
@@ -237,6 +300,73 @@ function comment_pub(id, catalog){
  */
 function comment_reply(id, catalog, receiver, replyid, author){
 	closeInputField();
+	var chatBox = api.require('chatBox');
+	chatBox.open({
+	    switchButton:{
+	        "faceNormal": "widget://image/chatBox/face1.png",
+	        "faceHighlight": "widget://image/chatBox/face2.png",
+	        "addNormal": "widget://image/chatBox/add1.png",
+	        "addHighlight": "widget://image/chatBox/add2.png",
+	        "keyboardNormal": "widget://image/chatBox/key1.png",
+	        "keyboardHighlight": "widget://image/chatBox/key2.png"
+	    },
+	    sourcePath:"widget://image/chatBox/emotion",
+		placeholder: "回复 @"+author+"：",
+		maxLines: 4,
+	    addButtons: [
+//	        {
+//	            "normal": "widget://image/chatBox/cam1.png",
+//	            "highlight": "widget://image/chatBox/cam2.png",
+//	            "title": "图片"
+//	        },
+//	        {
+//	            "normal": "widget://image/chatBox/loc1.png",
+//	            "highlight": "widget://image/chatBox/loc2.png",
+//	            "title": "位置"
+//	        }
+	    ]
+	},function(ret,err){
+	if(ret.click){
+	    //api.alert({msg:"用户点击了第"+ret.index+"个按钮"});
+	}else{
+			api.ajax({
+				url: OpenAPI.comment_reply,
+				method: 'post',
+				timeout: 30,
+				dataType: 'json',
+				data:{
+					values: {
+						access_token: $api.getStorage('access_token'),
+						id: id,
+						catalog: catalog,
+						content: ret.msg,
+						receiver: receiver,
+						authorid: receiver,
+						replyid: replyid,
+						isPostToMyZone: 1,		// 动弹是否转发到我的空间，1-转发，0-不转发。catalog 为 3 使用
+						dataType: 'json',
+					},
+				},
+				returnAll:false,
+			},function(ret,err){
+			    if (ret) {
+					api.execScript({
+					    name: 'win_comment_list',
+					    frameName: 'frm_comment_list',
+					    script: 'refreshComment();'
+					});
+					comment_pub('', '');
+			    }else {
+					api.toast({
+					    msg: '评论失败',
+					    duration:2000,
+					    location: 'middle'
+					});
+			    };
+			});
+	    }
+	});
+	/*
 	var obj = api.require('inputField');
 	obj.open({
 	    bgColor:'#ffffff',
@@ -281,12 +411,17 @@ function comment_reply(id, catalog, receiver, replyid, author){
 				});
 		    };
 		});
-	});
+	});*/
 }
 
 function closeInputField(){
-	var obj = api.require('inputField');
-	obj.close();
+	var obj = api.require('chatBox');
+	    obj.close();
+}
+
+function closeWin(){
+	closeInputField();
+	api.closeWin();
 }
 </script>
 </html>
