@@ -182,7 +182,7 @@ function comment_pub(id){
 	if(id == ''){	// 参数为空则恢复状态
 		id = $('#id').val();
 	}
-	closeInputField();
+	
 	var chatBox = api.require('chatBox');
 	chatBox.open({
 	    switchButton:{
@@ -234,7 +234,8 @@ function comment_pub(id){
 					    frameName: 'frm_blog_comment_list',
 					    script: 'refreshComment();'
 					});
-					comment_pub('');
+					closeInputField();
+					comment_pub(id);
 			    }else {
 					api.toast({
 					    msg: '评论失败',
@@ -354,7 +355,8 @@ function comment_reply(id, receiver, replyid, author){
 					    frameName: 'frm_blog_comment_list',
 					    script: 'refreshComment();'
 					});
-					comment_pub('');
+					closeInputField();
+					comment_pub(id);
 			    }else {
 					api.toast({
 					    msg: '回复评论失败',

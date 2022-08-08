@@ -183,7 +183,6 @@ function comment_pub(id, catalog){
 		id = $('#id').val();
 		catalog = $('#catalog').val();
 	}
-	closeInputField();
 	var chatBox = api.require('chatBox');
 	chatBox.open({
 	    switchButton:{
@@ -210,9 +209,9 @@ function comment_pub(id, catalog){
 //	        }
 	    ]
 	},function(ret,err){
-	if(ret.click){
-	    //api.alert({msg:"用户点击了第"+ret.index+"个按钮"});
-	}else{
+		if(ret.click){
+		    //api.alert({msg:"用户点击了第"+ret.index+"个按钮"});
+		}else{
 			api.ajax({
 				url: OpenAPI.comment_pub,
 				method: 'post',
@@ -234,7 +233,8 @@ function comment_pub(id, catalog){
 					    frameName: 'frm_comment_list',
 					    script: 'refreshComment();'
 					});
-					comment_pub('', '');
+					closeInputField();
+					comment_pub(id, catalog);
 			    }else {
 					api.toast({
 					    msg: '评论失败',
@@ -355,7 +355,8 @@ function comment_reply(id, catalog, receiver, replyid, author){
 					    frameName: 'frm_comment_list',
 					    script: 'refreshComment();'
 					});
-					comment_pub('', '');
+					closeInputField();
+					comment_pub(id, catalog);
 			    }else {
 					api.toast({
 					    msg: '评论失败',
