@@ -50,17 +50,6 @@
 <div id="wrap">
 	<div class="list" id="list">
 	
-		<!--div class="item"  tapmode="itemActive" onclick="openItem()">
-			<div class="title">
-				<img src="../image/today.png"/>像谈恋爱那样去招顶级程序员吧！
-			</div>
-			<div class="subTitle">
-				Coursera的首席产品经理John Ciancutti在1999年加入Netflix担任工程师，那时候它只是由……
-			</div>
-			<div class="info">
-				<span class="author">oschina</span><span class="time">4小时前</span><span class="commentCount">1评论</span>
-			</div>
-		</div-->
 	</div>
 	
 </div>
@@ -151,13 +140,12 @@ function getList(page, type){
 				}
 				html += '<div class="item" tapmode="itemActive" onclick="openItem('+list[i]["id"]+',\''+list[i]["title"]+'\','+list[i]["type"]+','+list[i]["object"]+',\''+list[i]["url"]+'\')">'+
 						'<div class="title">'+jin+list[i]["title"]+'</div>'+
-						//'<div class="subTitle">Coursera的首席产品经理John Ciancutti在1999年加入Netflix担任工程师，那时候它只是由……</div>'+
 						'<div class="info">'+
 						'<span class="author">'+list[i]["author"]+'</span><span class="time">'+friendly_time(list[i]["pubDate"])+'</span><span class="commentCount">'+list[i]["commentCount"]+'评论</span>'+
 						'</div>'+
 						'</div>';
 			}
-	        console.log(JSON.stringify(ret));
+	        //console.log(JSON.stringify(ret));
 	        if(page > 1 && type=='more'){
 	        	$api.append($api.dom('#list'), html);
 	        }else{

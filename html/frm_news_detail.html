@@ -68,6 +68,8 @@
 <link rel="stylesheet" type="text/css" href="../css/shCore.css"/>
 <link rel="stylesheet" type="text/css" href="../css/shThemeDefault.css"/>
 <script>
+var imageUrls = [];
+
 apiready = function () {
 	api.showProgress({
 	    style: 'default',
@@ -95,7 +97,19 @@ apiready = function () {
 	    
 	},function(ret,err){
 	    if (ret) {
-			log(ret);
+			// 图片浏览处理
+			var img_index = 0;
+			ret.body.replace(/<img.*?src=\"(.*?)\"[^>]*>/ig, function(a,b) {
+			    imageUrls.push(b);
+			    if(b.indexOf("emoticons")>0){
+			    	ret.body = ret.body.replace(a, "<img src='"+b+"' style='width:22px;height:22px;border: medium none;display: inline;margin: 0;padding: 0;' />");
+			    }else{
+			    	ret.body = ret.body.replace(a, "<img onclick='imageBrowser("+img_index+")' src='"+b+"' />");
+			    	img_index++;
+			    }
+			});
+			
+
 	        html += '<h1>'+pageParam.title+'</h1>'+
 	                '<label>'+ret.author+
 		            '&nbsp;&nbsp;&nbsp;<em>'+friendly_time(ret.pubDate)+'</em>'+
@@ -106,6 +120,8 @@ apiready = function () {
 	        $api.html($api.dom('#main'), html);
 	        
 	        SyntaxHighlighter.highlight();	// 代码高亮
+	        
+	        
 	    }else {
 			api.toast({
 			    msg: '获取失败',
@@ -119,6 +135,19 @@ apiready = function () {
 
 function closeInputField(){
 	api.execScript({name: 'win_news_detail', script: 'closeInputField()'});
+}
+
+// 浏览图片
+function imageBrowser(index){
+	if("undefined" == typeof index){
+		index = 0;
+	}
+	var obj = api.require('imageBrowser');
+	obj.openImages({
+	    imageUrls: imageUrls,
+	    showList:false,
+	    activeIndex:index
+	});
 }
 </script>
 </body>
