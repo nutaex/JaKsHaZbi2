@@ -110,11 +110,11 @@ apiready = function () {
 			ret.body.replace(/<img.*?src=\"(.*?)\"[^>]*>/ig, function(a,b) {
 			    imageUrls.push(b);
 			    if(b.indexOf("emoticons")>0){
-			    	ret.body = ret.body.replace(a, "<img src='"+b+"' style='width:22px;height:22px;border: medium none;display: inline;margin: 0;padding: 0;' />");
+			    	ret.body = ret.body.replace(a, "<img onclick='imageBrowser("+img_index+")' src='"+b+"' style='width:22px;height:22px;border: medium none;display: inline;margin: 0;padding: 0;' />");
 			    }else{
 			    	ret.body = ret.body.replace(a, "<img onclick='imageBrowser("+img_index+")' src='"+b+"' />");
-			    	img_index++;
 			    }
+			    img_index++;
 			});
 
 	        html += '<h1>'+ret.title+'</h1>'+
