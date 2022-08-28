@@ -94,8 +94,7 @@
 	var client_id, client_secret, redirect_uri;
     apiready = function () {
         $api.fixIos7Bar($api.dom('header'));
-
-        if(APP_DEBUG){	// 调试模式使用 config.js 里面的测试配置
+        if(APP_DEBUG == true){	// 调试模式使用 config.js 里面的测试配置
         	client_id 		= API_client_id;
         	client_secret 	= API_client_secret;
         	redirect_uri 	= API_redirect_uri;
@@ -103,18 +102,20 @@
 			api.loadSecureValue({
 				key:'client_id'
 			}, function(ret, err) {
-			    client_id = ret.client_id;
+			    client_id = ret.value;
 			});
 			api.loadSecureValue({
 				key:'client_secret'
 			}, function(ret, err) {
-			    client_secret = ret.client_secret;
+			    client_secret = ret.value;
 			});
 			api.loadSecureValue({
 				key:'redirect_uri'
 			}, function(ret, err) {
-			    redirect_uri = ret.redirect_uri;
+			    redirect_uri = ret.value;
 			});
+			
+			alert(redirect_uri);
         }
         		
     };
