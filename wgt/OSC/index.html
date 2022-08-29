@@ -113,10 +113,11 @@
         var headerPos = $api.offset(header);
 
 		var wgtParam = api.wgtParam;
-		console.log('URL: ' + wgtParam.url +'?response_type=code&client_id='+ wgtParam.client_id +'&state='+ wgtParam.state +'&redirect_uri=' + encodeURIComponent(wgtParam.redirect_uri));
+        var url = wgtParam.url +'?response_type=code&client_id='+ wgtParam.client_id +'&state='+ wgtParam.state +'&redirect_uri=' + encodeURIComponent(wgtParam.redirect_uri);
+        console.log(url);
         api.openFrame({
             name: 'login',
-            url: wgtParam.url +'?response_type=code&client_id='+ wgtParam.client_id +'&state='+ wgtParam.state +'&redirect_uri=' + encodeURIComponent(wgtParam.redirect_uri),
+            url: url,
             rect:{
                 x:0,
                 y:headerPos.h,
