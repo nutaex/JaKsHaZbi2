@@ -18,13 +18,15 @@ function open_url(url, title){
     });
 }
 
-
+/*
+ * 打开一个某个项目
+ */
 function openItem(id, title, type, object, url){
     if(arguments.length === 3){
         url = '';
     }
-    
-	switch(type)
+    log('id:'+id+', title:'+title+', type:'+type+', object:'+object+', url:'+url);
+	switch(parseInt(type))
 	{
 	case 0:	// 链接新闻
 	  open_url(url, '链接');
@@ -274,16 +276,4 @@ function adjustDate(date){
 		date=date.substring(0, date.length-2);
 	}
 	return friendly_time(date);
-}
-
-// 数组去重 (还没用到)
-function unique(arr) {
-    var result = [], hash = {};
-    for (var i = 0, elem; (elem = arr[i]) != null; i++) {
-        if (!hash[elem]) {
-            result.push(elem);
-            hash[elem] = true;
-        }
-    }
-    return result;
 }
