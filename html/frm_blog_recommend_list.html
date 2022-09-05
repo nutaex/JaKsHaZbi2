@@ -145,7 +145,7 @@ function getList(page, type){
 				}else if(list[i]['type']==4){
 					jin = '<img src="../image/repaste.png"/>';
 				}
-				html += '<div class="item" tapmode="itemActive" onclick="openItem(0,\''+list[i]["title"]+'\',3,'+list[i]["id"]+',\'\')">'+
+				html += '<div class="item" tapmode="itemActive" onclick="openItem(0,\''+escape(list[i]["title"])+'\',3,'+list[i]["id"]+',\'\')">'+
 						'<div class="title">'+jin+list[i]["title"]+'</div>'+
 						//'<div class="subTitle">Coursera的首席产品经理John Ciancutti在1999年加入Netflix担任工程师，那时候它只是由……</div>'+
 						'<div class="info">'+

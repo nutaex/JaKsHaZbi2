@@ -49,18 +49,7 @@
 <body>
 <div id="wrap">
 	<div class="list" id="list">
-	
-		<!--div class="item"  tapmode="itemActive" onclick="openItem()">
-			<div class="title">
-				<img src="../image/today.png"/>像谈恋爱那样去招顶级程序员吧！
-			</div>
-			<div class="subTitle">
-				Coursera的首席产品经理John Ciancutti在1999年加入Netflix担任工程师，那时候它只是由……
-			</div>
-			<div class="info">
-				<span class="author">oschina</span><span class="time">4小时前</span><span class="commentCount">1评论</span>
-			</div>
-		</div-->
+
 	</div>
 	
 </div>
@@ -98,7 +87,7 @@ apiready = function () {
 		name:'scrolltobottom'
 	},function(ret,err){
 		var page = $api.getStorage('news_list_page');
-		if(page > 1){
+		if(parseInt(page) > 1){
 			getList(page, 'more');
 		}
 	    
@@ -108,6 +97,7 @@ apiready = function () {
 
 
 function getList(page, type){
+	page = parseInt(page);
 	if(type != 'refresh'){
 		api.showProgress({
 		    style: 'default',
@@ -149,28 +139,28 @@ function getList(page, type){
 				if("undefined" == typeof list[i]["url"]){
 					list[i]["url"] = '';
 				}
-				html += '<div class="item" tapmode="itemActive" onclick="openItem('+list[i]["id"]+',\''+list[i]["title"]+'\','+list[i]["type"]+','+list[i]["object"]+',\''+list[i]["url"]+'\')">'+
-						'<div class="title">'+jin+list[i]["title"]+'</div>'+
-						//'<div class="subTitle">Coursera的首席产品经理John Ciancutti在1999年加入Netflix担任工程师，那时候它只是由……</div>'+
+				html += "<div class=\"item\" tapmode=\"itemActive\" onclick='openItem("+list[i]["id"]+",\""+escape(list[i]["title"])+"\","+list[i]["type"]+","+list[i]["object"]+",\""+list[i]["url"]+"\")'>"+
+						'<div class="title">'+jin+list[i]["title"]+'</div>'+						//'<div class="subTitle">Coursera的首席产品经理John Ciancutti在1999年加入Netflix担任工程师，那时候它只是由……</div>'+
 						'<div class="info">'+
 						'<span class="author">'+list[i]["author"]+'</span><span class="time">'+friendly_time(list[i]["pubDate"])+'</span><span class="commentCount">'+list[i]["commentCount"]+'评论</span>'+
 						'</div>'+
 						'</div>';
 			}
-	        console.log(JSON.stringify(ret));
+			
 	        if(page > 1 && type=='more'){
-	        	$api.append($api.dom('#list'), html);
+	        	$api.append($api.byId('list'), html);
 	        }else{
-	        	$api.html($api.dom('#list'), html);
+	        	$api.html($api.byId('list'), html);
 	        }
+	        
 	        api.parseTapmode();
-	        $api.setStorage('news_list_page', parseInt(page)+1);
+	        $api.setStorage('news_list_page', page+1);
 	        
 	        if(type == 'refresh'){
 	        	api.refreshHeaderLoadDone();
 	        	$api.setStorage('news_list_page', 2);
 	        }
-	        //$api.setStorage('access_token','0365931e-1e23-48b8-a7f7-1351341bc5ee');
+
 	    }else {
 	    	log('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode);
 	        if( tokenExpires(err.statusCode) ){

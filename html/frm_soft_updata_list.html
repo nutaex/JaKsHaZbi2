@@ -125,7 +125,6 @@ function getList(page, type){
 	    
 	},function(ret,err){
 	    if (ret) {
-	    	var data=new Array();
 	    	var list = ret.newslist;
 			for(var i=0;i<list.length;i++){
 				var jin = '';
@@ -138,18 +137,21 @@ function getList(page, type){
 				if("undefined" == typeof list[i]["url"]){
 					list[i]["url"] = '';
 				}
-				html += '<div class="item" tapmode="itemActive" onclick="openItem('+list[i]["id"]+',\''+list[i]["title"]+'\','+list[i]["type"]+','+list[i]["object"]+',\''+list[i]["url"]+'\')">'+
-						'<div class="title">'+jin+list[i]["title"]+'</div>'+
+
+				html += "<div class=\"item\" tapmode=\"itemActive\" onclick='openItem("+list[i]["id"]+",\""+escape(list[i]["title"])+"\","+list[i]["type"]+","+list[i]["object"]+",\""+list[i]["url"]+"\")'>"+
+						'<div class="title">'+jin+list[i]["title"]+'</div>'+						//'<div class="subTitle">Coursera的首席产品经理John Ciancutti在1999年加入Netflix担任工程师，那时候它只是由……</div>'+
 						'<div class="info">'+
 						'<span class="author">'+list[i]["author"]+'</span><span class="time">'+friendly_time(list[i]["pubDate"])+'</span><span class="commentCount">'+list[i]["commentCount"]+'评论</span>'+
 						'</div>'+
 						'</div>';
 			}
-	        //console.log(JSON.stringify(ret));
+			
+			
+
 	        if(page > 1 && type=='more'){
-	        	$api.append($api.dom('#list'), html);
+	        	$api.append($api.byId('list'), html);
 	        }else{
-	        	$api.html($api.dom('#list'), html);
+	        	$api.html($api.byId('list'), html);
 	        }
 	        api.parseTapmode();
 	        $api.setStorage('soft_updata_list_page', parseInt(page)+1);

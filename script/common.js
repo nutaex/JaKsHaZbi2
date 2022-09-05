@@ -8,7 +8,7 @@ function open_url(url, title){
     if(arguments.length === 1 && typeof arguments[0] == 'string'){
         title = '';
     }else if(arguments.length === 2 && typeof arguments[0] == 'string' && typeof arguments[1] == 'string'){
-        title = title;
+        title = unescape(title);
     }
     api.openWin({
         name: 'win_url',
@@ -22,6 +22,7 @@ function open_url(url, title){
  * 打开一个某个项目
  */
 function openItem(id, title, type, object, url){
+	title = unescape(title);
     if(arguments.length === 3){
         url = '';
     }
