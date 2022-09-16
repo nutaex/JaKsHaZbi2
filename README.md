@@ -17,9 +17,9 @@ OSChina 的 [OpenAPI](http://www.oschina.net/openapi) 存在很多BUG和缺陷�
 3. [blog_comment_list](http://www.oschina.net/openapi/docs/blog_comment_list) 和 [comment_list](http://www.oschina.net/openapi/docs/comment_list) 有很多差异，比如字段大小写、字段的数量、是否存在 refers 的差异等等，很坑，得小心。还有[blog_comment_pub](http://www.oschina.net/openapi/docs/blog_comment_pub) [blog_comment_reply](http://www.oschina.net/openapi/docs/blog_comment_reply) 与 [comment_pub](http://www.oschina.net/openapi/docs/comment_pub) [comment_reply](http://www.oschina.net/openapi/docs/comment_reply) 有所差异，得注意。
 
 ### 扫描下载
-![扫描下载](http://static.oschina.net/uploads/space/2015/0409/121515_SlEx_252582.jpg "扫描下载")
+![扫描下载](http://static.oschina.net/uploads/space/2015/0409/123631_wZHA_252582.jpg "扫描下载")
 
-对应版本 2015-04-07 8e08bd93f
+对应版本 2015-04-09 0587b6266 修复云编译后出现的登录问题
 
 ### 预览图
 ![输入图片说明](http://static.oschina.net/uploads/space/2015/0403/012845_NWTF_252582.jpg "登录页")
