@@ -94,7 +94,7 @@
 	var client_id, client_secret, redirect_uri;
     apiready = function () {
         $api.fixIos7Bar($api.dom('header'));
-        if(APP_DEBUG == true){	// 调试模式使用 config.js 里面的测试配置
+        if(APP_DEBUG){	// 调试模式使用 config.js 里面的测试配置
         	client_id 		= API_client_id;
         	client_secret 	= API_client_secret;
         	redirect_uri 	= API_redirect_uri;
