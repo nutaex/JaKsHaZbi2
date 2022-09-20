@@ -74,8 +74,6 @@ apiready = function () {
 	api.showProgress({
 	    style: 'default',
 	    animationType: 'fade',
-	    title: '努力加载中...',
-	    text: '先喝杯茶...',
 	    modal: false
 	});
 
@@ -97,6 +95,10 @@ apiready = function () {
 	    
 	},function(ret,err){
 	    if (ret) {
+	    
+			ret.body = ret.body.replace(/<a[^>]*>/g, '');	// 去掉 <a> 标签
+			ret.body = ret.body.replace(/<\/a>/g, '');
+			
 			// 图片浏览处理
 			var img_index = 0;
 			ret.body.replace(/<img.*?src=\"(.*?)\"[^>]*>/ig, function(a,b) {
